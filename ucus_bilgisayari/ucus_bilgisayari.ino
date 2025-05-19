@@ -627,7 +627,7 @@ int getPaketNumarasi() {
   }
 
   int lastNum = numStr.toInt();  // artık güvenle dönüştürebiliriz
-  return lastNum > 0 ? lastNum + 1 : 0;
+  return lastNum > 0 ? lastNum : 0;
 }
 
 void statuGuncelle(){
@@ -724,7 +724,7 @@ void printTelemetryData() {
   Serial.println(gps1_altitude);
 
   Serial.print("Pitch (deg): ");
-  Serial.println(pitch);
+  Serial.println(pitch);s
 
   Serial.print("Roll (deg): ");
   Serial.println(roll);
