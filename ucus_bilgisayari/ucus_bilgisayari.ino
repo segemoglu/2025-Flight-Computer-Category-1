@@ -1,3 +1,4 @@
+//BİSMİLLAHİRRAHMANİRRAHİM-İKRAM FATİH ÖZTIRPAN İLE KALİTEYE HOŞ GELDİNİZ
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
@@ -103,7 +104,7 @@ float h_ilk;
 
 
 
-
+#define BUZZER_PIN 37
 
 #define SD_CARD_PIN BUILTIN_SDCARD  // Teensy 4.1 için dahili SD kart pini
 const int chipSelect = BUILTIN_SDCARD;
@@ -683,9 +684,14 @@ void statuGuncelle() {
   }
 }
 
+void Buzzer_acik(){
+  pinMode(BUZZER_PIN, OUTPUT);
+  tone(BUZZER_PIN, 4);
+}
 
-
-
+void Buzzer_kapali(){
+  noTone(BUZZER_PIN);
+}
 
 
 
@@ -804,6 +810,10 @@ void ucus_kontrol(){
 
 void ucus_kontrol_bitis(){
   statuGuncelle();
+
+  if (uydu_statusu==5){
+    Buzzer_acik();
+  }
 
   printTelemetryData();
   writeDataToCSV();
