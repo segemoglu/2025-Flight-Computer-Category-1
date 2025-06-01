@@ -485,7 +485,7 @@ void sendLoRaPacket() {
   dataSend.team_no = takim_no;
 
   // Gönder
-  ResponseStatus rs = e22_2.sendFixedMessage(0, 6, 6, &dataSend, sizeof(DataNew));
+  ResponseStatus rs = e22_2.sendFixedMessage(0, 7, 18, &dataSend, sizeof(DataNew));
   
   if (rs.code != 1) {
     Serial.print("Hata: ");
@@ -724,7 +724,7 @@ void printTelemetryData() {
   Serial.println(gps1_altitude);
 
   Serial.print("Pitch (deg): ");
-  Serial.println(pitch);s
+  Serial.println(pitch);
 
   Serial.print("Roll (deg): ");
   Serial.println(roll);

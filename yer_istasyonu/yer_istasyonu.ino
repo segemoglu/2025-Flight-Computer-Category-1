@@ -55,11 +55,11 @@ void loop() {
   }
 
   if (e22.available() > 0) {
-    ResponseStructContainer rsc = e22ttl.receiveMessage(sizeof(Message));
-    Message receivedMessage = *(Message*)rsc.data;
+    ResponseStructContainer rsc = e22.receiveMessage(sizeof(DataNew));
+    DataNew receivedMessage = *(DataNew*)rsc.data;
 
-    Serial.print("Temperature: ");
-    Serial.println(receivedMessage.temperature);
+    Serial.print("Packet No: ");
+    Serial.println(receivedMessage.packet_no);
   }
 }
 

@@ -23,7 +23,7 @@ void loop() {
 
         // Float değeri stringe çevir ve IOT2 etiketi ekle
         String message = String("#IOT1:") + String(sensorValue, 2);  // 2 ondalık basamakla
-        ResponseStatus rs = e22.sendFixedMessage(0, 1, 6, message.c_str(), message.length());
+        ResponseStatus rs = e22.sendFixedMessage(0, 2, 6, message.c_str(), message.length());
 
         Serial.print("Gönderilen veri: ");
         Serial.println(message);
