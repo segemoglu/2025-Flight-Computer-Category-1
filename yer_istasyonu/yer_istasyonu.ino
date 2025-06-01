@@ -1,7 +1,8 @@
 #include "LoRa_E22.h"
 #include <Arduino.h>
 
-LoRa_E22 e22(&Serial2, 4, 10, 9); 
+LoRa_E22 e22(&Serial2, 4, 10, 9); // A-7, C-18
+LoRa_E22 e22_2(&Serial3, 5, 12, 11); // A-3, C-6
 
 typedef struct {
   int packet_no;
@@ -31,7 +32,9 @@ typedef struct {
 void setup() {
     Serial.begin(9600);
     Serial2.begin(9600);
+    Serial3.begin(9600);
     e22.begin();
+    e22_2.begin();
 
     delay(500);
 }
@@ -46,7 +49,7 @@ void loop() {
 
     // Maksimum 58 bayt sınırını aşmadığından emin ol
     if (messageToSend.length() <= 239) {
-      ResponseStatus rs = e22.sendFixedMessage(0, 1, 6, messageToSend.c_str(), messageToSend.length());
+      ResponseStatus rs = e22_2.sendFixedMessage(0, 2, 6, messageToSend.c_str(), messageToSend.length());
       Serial.println("Gönderildi: " + messageToSend);
       Serial.println(rs.getResponseDescription());
     } else {

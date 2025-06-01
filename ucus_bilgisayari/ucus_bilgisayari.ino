@@ -1,15 +1,15 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
-#include <RTClib.h>  // RTC kütüphanesi
+#include <RTClib.h>  
 #include <TinyGPS++.h>
 #include "Arduino.h"
 #include "LoRa_E22.h"
 #include <SD.h>
 #include <SPI.h>
 
-LoRa_E22 e22(&Serial2, 4, 10, 9);
-LoRa_E22 e22_2(&Serial7, 30, 31, 32);
+LoRa_E22 e22(&Serial2, 4, 10, 9); // A-2, C-6
+LoRa_E22 e22_2(&Serial7, 30, 31, 32); // A-3, C-18
 
 
 
@@ -523,9 +523,9 @@ void verileriSifirla() {
   // Karakter dizileri - LoRa ile sabit uzunlukta gönderime uygun hale getirme
   hata_kodu[0] = '\0';
 
-  gonderme_saati[17] = '\0';
+  gonderme_saati[0] = '\0';
 
-  rhrh[4] = '\0';
+  rhrh[0] = '\0';
 }
 
 
