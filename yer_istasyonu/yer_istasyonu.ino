@@ -61,8 +61,28 @@ void loop() {
     ResponseStructContainer rsc = e22.receiveMessage(sizeof(DataNew));
     DataNew receivedMessage = *(DataNew*)rsc.data;
 
-    Serial.print("Packet No: ");
-    Serial.println(receivedMessage.packet_no);
+    Serial.print(receivedMessage.packet_no);Serial.print("*");
+    Serial.print(receivedMessage.status);Serial.print("*");
+    Serial.print(receivedMessage.error_code);Serial.print("*");
+    Serial.print(receivedMessage.time_data);Serial.print("*");
+    Serial.print(receivedMessage.pressure1);Serial.print("*");
+    Serial.print(receivedMessage.pressure2);Serial.print("*");
+    Serial.print(receivedMessage.altitude1);Serial.print("*");
+    Serial.print(receivedMessage.altitude2);Serial.print("*");
+    Serial.print(receivedMessage.heigh_difference);Serial.print("*");
+    Serial.print(receivedMessage.vertical_speed);Serial.print("*");
+    Serial.print(receivedMessage.temperature);Serial.print("*");
+    Serial.print(receivedMessage.battery_voltage);Serial.print("*");
+    Serial.print(receivedMessage.gps_latitude);Serial.print("*");
+    Serial.print(receivedMessage.gps_longitude);Serial.print("*");
+    Serial.print(receivedMessage.gps_altitude);Serial.print("*");
+    Serial.print(receivedMessage.pitch);Serial.print("*");
+    Serial.print(receivedMessage.roll);Serial.print("*");
+    Serial.print(receivedMessage.yaw);Serial.print("*");
+    Serial.print(receivedMessage.rhrh);Serial.print("*");
+    Serial.print(receivedMessage.iot1);Serial.print("*");
+    Serial.print(receivedMessage.iot2);Serial.print("*");
+    Serial.println(receivedMessage.team_no);
   }
 }
 
