@@ -94,6 +94,10 @@ int takim_no;                 // <TAKIM NO>
 
 
 
+bool ayrilma_gerceklesti_mi;
+float h_son;
+float h_ilk;
+
 
 
 
@@ -630,9 +634,56 @@ int getPaketNumarasi() {
   return lastNum > 0 ? lastNum : 0;
 }
 
-void statuGuncelle(){
+void statuGuncelle() {
+  h_ilk = h_son;
+  h_son = yukseklik1;
+  const float ayrilmaYuksekligi = 410.0;
+  const float sabitlikEsligi = 0.5; // tolerans (örnek)
 
+  switch (uydu_statusu) {
+    case 0: // Başlangıç: Yerden ayrılma tespiti
+      if (yukseklik1 > 5 && h_son > h_ilk) {
+        uydu_statusu = 1;
+      }
+      break;
+
+    case 1: // Yükselme süreci
+      if (h_son < h_ilk) {
+        uydu_statusu = 2;
+      }
+      break;
+
+    case 2: // Alçalma süreci
+      if (yukseklik1 <= ayrilmaYuksekligi) {
+        uydu_statusu = 3;
+      }
+      break;
+
+    case 3: // Ayrılma beklentisi
+      if (ayrilma_gerceklesti_mi) {
+        uydu_statusu = 4;
+      }
+      break;
+
+    case 4: // Sabit yükseklik tespiti (iniş sonrası)
+      if (fabs(h_son - h_ilk) < sabitlikEsligi) {
+        uydu_statusu = 5;
+      }
+      break;
+
+
+    case 5: // Görev tamamlandı
+      // Durum sabit kalır, hiçbir işlem yapılmaz
+      break;
+
+    default:
+      // Beklenmeyen durum: güvenli varsayılan
+      uydu_statusu = 0;
+      break;
+  }
 }
+
+
 
 
 
@@ -752,6 +803,8 @@ void ucus_kontrol(){
 }
 
 void ucus_kontrol_bitis(){
+  statuGuncelle();
+
   printTelemetryData();
   writeDataToCSV();
   verileriSifirla();
@@ -772,6 +825,10 @@ void setup() {
   Wire.begin();
 
   takim_no = 613581;
+  uydu_statusu = 0;
+  h_son = 0;
+  h_ilk = 0;
+  ayrilma_gerceklesti_mi = false;
 
   // RTC başlatma
   if (!rtc.begin()) {
