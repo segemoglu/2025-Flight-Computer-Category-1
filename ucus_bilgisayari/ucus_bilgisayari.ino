@@ -101,8 +101,10 @@ float h_ilk;
 
 
 
-
-
+#define ADC_PIN 23
+const float R1 = 10000.0;  // 10k Ohm
+const float R2 = 1000.0;   // 1k Ohm
+const float ADC_REF_VOLTAGE = 3.3;  // Teensy 4.1 referans gerilimi
 
 #define BUZZER_PIN 37
 
@@ -693,7 +695,13 @@ void Buzzer_kapali(){
   noTone(BUZZER_PIN);
 }
 
+void Pil_voltaji(){
+  int rawValue = analogRead(ADC_PIN);
+  float voltageADC = (rawValue * ADC_REF_VOLTAGE) / 4095.0;
+  float voltagePil = voltageADC * (R1 + R2) / R2;  // voltageADC * 11
 
+  pil_gerilimi = voltagePil;
+}
 
 
 
@@ -806,10 +814,12 @@ void printTelemetryData() {
 
 void ucus_kontrol(){
   paket_numarasi +=1;
+  Pil_voltaji();
 }
 
 void ucus_kontrol_bitis(){
   statuGuncelle();
+  
 
   if (uydu_statusu==5){
     Buzzer_acik();
@@ -833,6 +843,7 @@ void setup() {
   e22.begin(); // lora baslat
   e22_2.begin();
   Wire.begin();
+  analogReadResolution(12);
 
   takim_no = 613581;
   uydu_statusu = 0;
