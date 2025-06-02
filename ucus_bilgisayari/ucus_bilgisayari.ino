@@ -909,6 +909,8 @@ void printTelemetryData() {
 void ucus_kontrol(){
   paket_numarasi +=1;
   Pil_voltaji();
+
+
 }
 
 void ucus_kontrol_bitis(){
@@ -917,6 +919,10 @@ void ucus_kontrol_bitis(){
 
   if (uydu_statusu==5){
     Buzzer_acik();
+  }
+
+  if(uydu_statusu==2 && yukseklik1<=410){
+    Ayrilma();
   }
 
   printTelemetryData();
