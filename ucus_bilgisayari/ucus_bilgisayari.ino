@@ -27,7 +27,6 @@ bool ms5611Flag = false;
 bool sendLoRaPacketFlag = false;
 bool kontrolFlag = false;
 bool kontrolBitisFlag = false;
-bool kontrolBitisFlag = false;
 bool hataKodu = false;
 
 volatile uint32_t tickCount = 0;
@@ -597,12 +596,12 @@ void verileriSifirla() {
 
   rhrh[0] = '\0';
 
-  bool hata1 = false;
-  bool hata2 = false;
-  bool hata3 = false;
-  bool hata4 = false;
-  bool hata5 = false;
-  bool hata6 = false;
+  hata1 = false;
+  hata2 = false;
+  hata3 = false;
+  hata4 = false;
+  hata5 = false;
+  hata6 = false;
 }
 
 
@@ -781,7 +780,7 @@ void Hata_kodu(){
   if(inis_hizi<8 && inis_hizi>6){
     hata2 = true;
   }
-  if(pressure2 != 0){
+  if(basinc2 != 0){
     hata3 = true;
   }
   if(ayrilma_gerceklesti_mi){
