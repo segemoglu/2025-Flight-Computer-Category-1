@@ -8,23 +8,37 @@
 #include "LoRa_E22.h"
 #include <SD.h>
 #include <SPI.h>
+#include <Servo.h>
 
 LoRa_E22 e22(&Serial2, 4, 10, 9); // A-2, C-6
 LoRa_E22 e22_2(&Serial7, 30, 31, 32); // A-3, C-18
 
-
+Servo myServo;  
+Servo myServo2;
+Servo myServo3;  
+Servo myServo4;
 
 IntervalTimer masterTimer;
 volatile bool masterFlag = false;
 
-volatile bool rtcFlag = false;
-volatile bool bno055Flag = false;
-volatile bool ms5611Flag = false;
-volatile bool sendLoRaPacketFlag = false;
-volatile bool kontrolFlag = false;
-volatile bool kontrolBitisFlag = false;
+bool rtcFlag = false;
+bool bno055Flag = false;
+bool ms5611Flag = false;
+bool sendLoRaPacketFlag = false;
+bool kontrolFlag = false;
+bool kontrolBitisFlag = false;
+bool kontrolBitisFlag = false;
+bool hataKodu = false;
 
 volatile uint32_t tickCount = 0;
+
+
+bool hata1 = false;
+bool hata2 = false;
+bool hata3 = false;
+bool hata4 = false;
+bool hata5 = false;
+bool hata6 = false;
 
 
 
@@ -299,8 +313,19 @@ void readGPS(){
     char c = Serial6.read();
     gps.encode(c);
   }
+}
 
-
+void loadGPS(){
+    if (gps.location.isValid() && gps.location.isUpdated()) {
+    gps1_latitude = gps.location.lat();
+    gps1_longitude = gps.location.lng();
+    gps1_altitude = gps.altitude.meters();
+    hata4 = true;
+  } else {
+    gps1_latitude = 0;
+    gps1_longitude = 0;
+    gps1_altitude = 0;
+  }
 }
 
 void readMS5611(){ 
@@ -315,18 +340,6 @@ void readMS5611(){
   basinc1 = pressure;
   yukseklik1 = altitude;
   inis_hizi = vertical_speed;
-
-
-
-    if (gps.location.isValid() && gps.location.isUpdated()) {
-    gps1_latitude = gps.location.lat();
-    gps1_longitude = gps.location.lng();
-    gps1_altitude = gps.altitude.meters();
-  } else {
-    gps1_latitude = 0;
-    gps1_longitude = 0;
-    gps1_altitude = 0;
-  }
 }
 
 void readBNO055(){
@@ -442,7 +455,19 @@ void ayirString(String girdi) {
         }else if(anahtar=="#IOT2"){
           iot_s2_data = deger.toFloat();
         }else if(anahtar=="#COM"){
-          Serial.println("Komut işlendi"); //Komutlar buradan uygulanacak---------------------------------------------- unutma
+          char harf = ilkHarfKontrol(deger);
+          if(harf == 'A'){
+            Ayrilma();
+          }
+          else if(harf == 'B'){
+            Kitleme();
+          }
+          else if(harf == 'C'){
+            
+          }
+          else if(harf == 'D'){
+            
+          }
         }else if(anahtar=="#KAP"){
           basinc2 = deger.toFloat();
         }
@@ -450,6 +475,44 @@ void ayirString(String girdi) {
     }
   }
 }
+
+char ilkHarfKontrol(const String& deger) {
+  if (deger.length() == 0) {
+    Serial.println("Hata: 'deger' boş.");
+    return '\0';
+  }
+
+  char ilkKarakter = deger.charAt(0);
+  if (isAlpha(ilkKarakter)) {
+    return ilkKarakter;
+  } else {
+    Serial.println("Hata: İlk karakter harf değil.");
+    return '\0';
+  }
+}
+
+void Ayrilma(){
+  const int inputAngle = 180;
+  myServo.write(inputAngle);
+  myServo2.write(inputAngle);
+}
+
+void Kitleme(){
+  const int inputAngle = 120;
+  myServo.write(inputAngle);
+  myServo2.write(inputAngle);
+}
+
+void Kalibrasyon(){
+  //DAHA SONRA YAPILACAK
+}
+
+void Multispektral_filtre(){
+  //Bitmedi daha
+  hata6 = true;
+}
+
+
 
 void lora(){
   if (e22.available()>1) {
@@ -533,6 +596,13 @@ void verileriSifirla() {
   gonderme_saati[0] = '\0';
 
   rhrh[0] = '\0';
+
+  bool hata1 = false;
+  bool hata2 = false;
+  bool hata3 = false;
+  bool hata4 = false;
+  bool hata5 = false;
+  bool hata6 = false;
 }
 
 
@@ -704,6 +774,31 @@ void Pil_voltaji(){
 }
 
 
+void Hata_kodu(){
+  if(inis_hizi<14 && inis_hizi>12){
+    hata1 = true;
+  }
+  if(inis_hizi<8 && inis_hizi>6){
+    hata2 = true;
+  }
+  if(pressure2 != 0){
+    hata3 = true;
+  }
+  if(ayrilma_gerceklesti_mi){
+    hata5 = true;
+  }
+
+  hata_kodu[0] = hata1 ? '0' : '1';
+  hata_kodu[1] = hata2 ? '0' : '1';
+  hata_kodu[2] = hata3 ? '0' : '1';
+  hata_kodu[3] = hata4 ? '0' : '1';
+  hata_kodu[4] = hata5 ? '0' : '1';
+  hata_kodu[5] = hata6 ? '0' : '1';
+}
+
+
+
+
 
 
 
@@ -843,6 +938,10 @@ void setup() {
   e22.begin(); // lora baslat
   e22_2.begin();
   Wire.begin();
+  myServo.attach(2);   
+  myServo2.attach(3);
+  myServo3.attach(5);   
+  myServo4.attach(6);
   analogReadResolution(12);
 
   takim_no = 613581;
@@ -892,9 +991,10 @@ void loop() {
     if (tickCount % 1000 == 0) rtcFlag = true;              
     if (tickCount % 1000 == 0) bno055Flag = true;          
     if (tickCount % 1000 == 0) ms5611Flag = true;          
-    if (tickCount % 1000 == 0) sendLoRaPacketFlag = true; 
+    if (tickCount % 1000 == 0) sendLoRaPacketFlag = true;
     if (tickCount % 1000 == 0) kontrolFlag = true;       
     if (tickCount % 1000 == 0) kontrolBitisFlag  = true;
+    if (tickCount % 1000 == 0) hataKodu  = true;
   }
 
   if (kontrolFlag) {
@@ -919,6 +1019,11 @@ void loop() {
   if (bno055Flag) {
     bno055Flag = false;
     readBNO055();
+  }
+
+  if (hataKodu) {
+    hataKodu = false;
+    Hata_kodu();
   }
 
   if (sendLoRaPacketFlag) {
