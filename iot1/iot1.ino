@@ -2,7 +2,7 @@
 #include "LoRa_E22.h"
 #include <SoftwareSerial.h>
 
-LoRa_E22 e22(3, 4, 5, 7, 6); // TX, RX, M0, M1, AUX
+LoRa_E22 e22(3, 4, 5, 6, 7); // TX, RX, M0, M1, AUX
 
 float sensorValue = 1903.1903;
 
